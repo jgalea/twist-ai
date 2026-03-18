@@ -1,4 +1,4 @@
-import { getFullTwistURL } from '@doist/twist-sdk'
+import { type SearchResultType, getFullTwistURL } from '@doist/twist-sdk'
 import { z } from 'zod'
 import { getToolOutput } from '../mcp-helpers.js'
 import type { TwistTool } from '../twist-tool.js'
@@ -30,7 +30,7 @@ type SearchContentStructured = {
     workspaceId: number
     results: Array<{
         id: string
-        type: 'thread' | 'comment' | 'message'
+        type: SearchResultType
         content: string
         creatorId: number
         creatorName?: string
@@ -220,8 +220,12 @@ const searchContent = {
                         channelId: r.channelId,
                         commentId: r.id,
                     })
-                } else if (r.conversationId !== undefined) {
-                    // message
+                } else if (r.type === 'conversation' && r.conversationId !== undefined) {
+                    url = getFullTwistURL({
+                        workspaceId,
+                        conversationId: r.conversationId,
+                    })
+                } else if (r.type === 'message' && r.conversationId !== undefined) {
                     url = getFullTwistURL({
                         workspaceId,
                         conversationId: r.conversationId,
