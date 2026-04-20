@@ -1,3 +1,9 @@
+## [4.6.1](https://github.com/Doist/twist-ai/compare/v4.6.0...v4.6.1) (2026-04-20)
+
+### Bug Fixes
+
+* **deps:** update dependency dotenv to v17.4.2 ([#174](https://github.com/Doist/twist-ai/issues/174)) ([48992e5](https://github.com/Doist/twist-ai/commit/48992e55e6ca4cacbe7337519f96a5fa1d9554b6))
+
 ## [4.6.0](https://github.com/Doist/twist-ai/compare/v4.5.2...v4.6.0) (2026-04-16)
 
 ### Features
