@@ -1,3 +1,13 @@
+## [5.0.0](https://github.com/Doist/twist-ai/compare/v4.7.1...v5.0.0) (2026-04-28)
+
+### ⚠ BREAKING CHANGES
+
+* replace update-thread/update-comment with unified update-object tool (#182)
+
+### Features
+
+* replace update-thread/update-comment with unified update-object tool ([#182](https://github.com/Doist/twist-ai/issues/182)) ([82e04c0](https://github.com/Doist/twist-ai/commit/82e04c0076e55649ded85691419798e7709048ef))
+
 ## [4.7.1](https://github.com/Doist/twist-ai/compare/v4.7.0...v4.7.1) (2026-04-27)
 
 ### Bug Fixes
