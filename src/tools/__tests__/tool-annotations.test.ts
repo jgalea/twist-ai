@@ -83,6 +83,13 @@ const TOOL_EXPECTATIONS: ToolExpectation[] = [
         idempotentHint: false,
     },
     {
+        name: ToolNames.CREATE_CONVERSATION,
+        title: 'Twist: Create Conversation',
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+    },
+    {
         name: ToolNames.UPDATE_THREAD,
         title: 'Twist: Update Thread',
         readOnlyHint: false,

@@ -6,7 +6,7 @@ import { type UpdateMessageOutput, UpdateMessageOutputSchema } from '../utils/ou
 import { ToolNames } from '../utils/tool-names.js'
 
 const ArgsSchema = {
-    id: z.number().describe('The ID of the conversation message to update.'),
+    id: z.coerce.number().describe('The ID of the conversation message to update.'),
     content: z.string().min(1).describe('The new content for the message.'),
 }
 

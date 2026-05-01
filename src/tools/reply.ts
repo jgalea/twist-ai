@@ -10,10 +10,10 @@ const ArgsSchema = {
     targetType: ReplyTargetTypeSchema.describe(
         'The type of object to reply to: thread (posts a comment) or conversation (posts a message).',
     ),
-    targetId: z.number().describe('The ID of the thread or conversation to reply to.'),
+    targetId: z.coerce.number().describe('The ID of the thread or conversation to reply to.'),
     content: z.string().min(1).describe('The content of the reply.'),
     recipients: z
-        .array(z.number())
+        .array(z.coerce.number())
         .optional()
         .describe(
             'Optional array of user IDs to notify (only for thread replies). If omitted, Twist defaults to notifying all current members of the channel. Add specific user IDs to limit or expand notifications beyond current channel members.',

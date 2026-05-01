@@ -6,7 +6,7 @@ import { LoadThreadOutputSchema } from '../utils/output-schemas.js'
 import { ToolNames } from '../utils/tool-names.js'
 
 const ArgsSchema = {
-    threadId: z.number().describe('The thread ID to load.'),
+    threadId: z.coerce.number().describe('The thread ID to load.'),
     newerThanDate: z
         .string()
         .optional()

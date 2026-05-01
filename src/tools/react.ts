@@ -10,7 +10,7 @@ const ArgsSchema = {
     targetType: ReactionTargetTypeSchema.describe(
         'The type of object to react to: thread, comment, or message.',
     ),
-    targetId: z.number().describe('The ID of the thread, comment, or message to react to.'),
+    targetId: z.coerce.number().describe('The ID of the thread, comment, or message to react to.'),
     emoji: z.string().min(1).describe('The emoji to react with (e.g., "👍", "❤️", "🎉").'),
     operation: z
         .enum(['add', 'remove'])

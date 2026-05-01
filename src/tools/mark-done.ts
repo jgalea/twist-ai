@@ -10,7 +10,7 @@ const ArgsSchema = {
 
     // Individual IDs
     ids: z
-        .array(z.number())
+        .array(z.coerce.number())
         .optional()
         .describe(
             'Specific thread or conversation IDs to mark as done. Use this OR bulk selectors.',

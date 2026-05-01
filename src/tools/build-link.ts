@@ -6,7 +6,7 @@ import { BuildLinkOutputSchema } from '../utils/output-schemas.js'
 import { ToolNames } from '../utils/tool-names.js'
 
 const ArgsSchema = {
-    workspaceId: z.number().describe('The workspace ID.'),
+    workspaceId: z.coerce.number().describe('The workspace ID.'),
     conversationId: z
         .number()
         .optional()
@@ -16,8 +16,8 @@ const ArgsSchema = {
         .or(z.string())
         .optional()
         .describe('The message ID (for specific message links within a conversation).'),
-    channelId: z.number().optional().describe('The channel ID (for thread links in channels).'),
-    threadId: z.number().optional().describe('The thread ID (for thread/comment links).'),
+    channelId: z.coerce.number().optional().describe('The channel ID (for thread links in channels).'),
+    threadId: z.coerce.number().optional().describe('The thread ID (for thread/comment links).'),
     commentId: z
         .number()
         .or(z.string())

@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`create-conversation tool opening a conversation should get or create a conversation without an initial message 1`] = `
+"# Conversation Opened
+
+**Conversation ID:** 33333
+**Workspace ID:** 11111
+**Participants:** 22222, 44444
+**URL:** https://twist.com/a/11111/msg/33333/"
+`;
+
+exports[`create-conversation tool opening a conversation should post an initial message when provided 1`] = `
+"# Conversation Opened
+
+**Conversation ID:** 33333
+**Workspace ID:** 11111
+**Participants:** 22222, 44444
+**URL:** https://twist.com/a/11111/msg/33333/
+
+## Message Posted
+
+**Message ID:** 98765
+**Posted:** 2024-01-01T00:00:00.000Z
+
+Hello, let us chat!"
+`;

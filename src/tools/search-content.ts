@@ -7,9 +7,9 @@ import { ToolNames } from '../utils/tool-names.js'
 
 const ArgsSchema = {
     query: z.string().min(1).describe('The search query string.'),
-    workspaceId: z.number().describe('The workspace ID to search in.'),
-    channelIds: z.array(z.number()).optional().describe('Filter by channel IDs.'),
-    authorIds: z.array(z.number()).optional().describe('Filter by author user IDs.'),
+    workspaceId: z.coerce.number().describe('The workspace ID to search in.'),
+    channelIds: z.array(z.coerce.number()).optional().describe('Filter by channel IDs.'),
+    authorIds: z.array(z.coerce.number()).optional().describe('Filter by author user IDs.'),
     mentionSelf: z.boolean().optional().describe('Filter by mentions of current user.'),
     dateFrom: z.string().optional().describe('Start date for filtering (YYYY-MM-DD).'),
     dateTo: z.string().optional().describe('End date for filtering (YYYY-MM-DD).'),

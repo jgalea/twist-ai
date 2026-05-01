@@ -383,6 +383,19 @@ export const MarkDoneOutputSchema = z.object({
 })
 
 /**
+ * Schema for create-conversation tool output
+ */
+export const CreateConversationOutputSchema = z.object({
+    type: z.literal('create_conversation_result'),
+    success: z.boolean(),
+    conversationId: z.number(),
+    conversationUrl: z.string(),
+    participants: z.array(z.number()),
+    messageId: z.number().optional(),
+    messageUrl: z.string().optional(),
+})
+
+/**
  * Schema for list-channels tool output
  */
 export const ListChannelsOutputSchema = z.object({
@@ -419,6 +432,7 @@ export const StructuredOutputSchema = z.union([
     UserInfoOutputSchema,
     BuildLinkOutputSchema,
     CreateThreadOutputSchema,
+    CreateConversationOutputSchema,
     UpdateThreadOutputSchema,
     UpdateCommentOutputSchema,
     UpdateMessageOutputSchema,
@@ -432,6 +446,7 @@ export const StructuredOutputSchema = z.union([
  * Type definitions for the structured outputs
  */
 export type CreateThreadOutput = z.infer<typeof CreateThreadOutputSchema>
+export type CreateConversationOutput = z.infer<typeof CreateConversationOutputSchema>
 export type UpdateThreadOutput = z.infer<typeof UpdateThreadOutputSchema>
 export type UpdateCommentOutput = z.infer<typeof UpdateCommentOutputSchema>
 export type UpdateMessageOutput = z.infer<typeof UpdateMessageOutputSchema>

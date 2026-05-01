@@ -6,7 +6,7 @@ import { LoadConversationOutputSchema } from '../utils/output-schemas.js'
 import { ToolNames } from '../utils/tool-names.js'
 
 const ArgsSchema = {
-    conversationId: z.number().describe('The conversation ID to load.'),
+    conversationId: z.coerce.number().describe('The conversation ID to load.'),
     newerThanDate: z
         .string()
         .optional()

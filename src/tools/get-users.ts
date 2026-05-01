@@ -6,9 +6,9 @@ import { GetUsersOutputSchema } from '../utils/output-schemas.js'
 import { ToolNames } from '../utils/tool-names.js'
 
 const ArgsSchema = {
-    workspaceId: z.number().describe('The workspace ID to get users from.'),
+    workspaceId: z.coerce.number().describe('The workspace ID to get users from.'),
     userIds: z
-        .array(z.number())
+        .array(z.coerce.number())
         .optional()
         .describe(
             'Optional array of specific user IDs to fetch. If not provided or empty array, fetches all workspace users.',

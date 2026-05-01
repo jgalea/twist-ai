@@ -6,11 +6,11 @@ import { type CreateThreadOutput, CreateThreadOutputSchema } from '../utils/outp
 import { ToolNames } from '../utils/tool-names.js'
 
 const ArgsSchema = {
-    channelId: z.number().describe('The ID of the channel to create the thread in.'),
+    channelId: z.coerce.number().describe('The ID of the channel to create the thread in.'),
     title: z.string().min(1).describe('The title of the thread.'),
     content: z.string().min(1).describe('The content/body of the thread.'),
     recipients: z
-        .array(z.number())
+        .array(z.coerce.number())
         .optional()
         .describe(
             'Optional array of user IDs to notify. If omitted, Twist defaults to notifying all current members of the channel (equivalent to the API\'s "EVERYONE" default). Note: workspace users who have not joined this channel will not be notified — add their IDs explicitly if you want to reach them.',

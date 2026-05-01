@@ -6,7 +6,7 @@ import { type UpdateThreadOutput, UpdateThreadOutputSchema } from '../utils/outp
 import { ToolNames } from '../utils/tool-names.js'
 
 const ArgsSchema = {
-    id: z.number().describe('The ID of the thread to update.'),
+    id: z.coerce.number().describe('The ID of the thread to update.'),
     title: z.string().min(1).optional().describe('The new title for the thread.'),
     content: z.string().min(1).optional().describe('The new content/body for the thread.'),
 }

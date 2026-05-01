@@ -13,7 +13,7 @@ import { FetchInboxOutputSchema } from '../utils/output-schemas.js'
 import { ToolNames } from '../utils/tool-names.js'
 
 const ArgsSchema = {
-    workspaceId: z.number().describe('The workspace ID to fetch inbox for.'),
+    workspaceId: z.coerce.number().describe('The workspace ID to fetch inbox for.'),
     sinceDate: z
         .string()
         .optional()

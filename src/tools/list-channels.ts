@@ -7,7 +7,7 @@ import { ToolNames } from '../utils/tool-names.js'
 import { getChannelUrl } from '../utils/url-helpers.js'
 
 const ArgsSchema = {
-    workspaceId: z.number().describe('The workspace ID to list channels from.'),
+    workspaceId: z.coerce.number().describe('The workspace ID to list channels from.'),
     includeArchived: z
         .boolean()
         .optional()
