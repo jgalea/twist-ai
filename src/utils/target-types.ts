@@ -46,3 +46,10 @@ export type SearchScope = z.infer<typeof SearchScopeSchema>
 export const MarkDoneType = createEnumSchema(['thread', 'conversation'])
 export const MarkDoneTypeSchema = MarkDoneType.schema
 export type MarkDoneType = z.infer<typeof MarkDoneTypeSchema>
+
+/**
+ * Target types for deletion
+ */
+export const DeleteTargetType = createEnumSchema(['thread', 'comment', 'message'])
+export const DeleteTargetTypeSchema = DeleteTargetType.schema
+export type DeleteTargetType = z.infer<typeof DeleteTargetTypeSchema>

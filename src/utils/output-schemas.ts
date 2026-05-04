@@ -367,6 +367,16 @@ export const MarkDoneOutputSchema = z.object({
 })
 
 /**
+ * Schema for delete tool output
+ */
+export const DeleteOutputSchema = z.object({
+    type: z.literal('delete_result'),
+    success: z.boolean(),
+    targetType: z.enum(['thread', 'comment', 'message']),
+    id: z.number(),
+})
+
+/**
  * Schema for list-channels tool output
  */
 export const ListChannelsOutputSchema = z.object({
@@ -409,6 +419,7 @@ export const StructuredOutputSchema = z.union([
     ReactOutputSchema,
     MarkDoneOutputSchema,
     ListChannelsOutputSchema,
+    DeleteOutputSchema,
 ])
 
 /**
@@ -430,4 +441,5 @@ export type ReplyOutput = z.infer<typeof ReplyOutputSchema>
 export type ReactOutput = z.infer<typeof ReactOutputSchema>
 export type MarkDoneOutput = z.infer<typeof MarkDoneOutputSchema>
 export type ListChannelsOutput = z.infer<typeof ListChannelsOutputSchema>
+export type DeleteOutput = z.infer<typeof DeleteOutputSchema>
 export type StructuredOutput = z.infer<typeof StructuredOutputSchema>
