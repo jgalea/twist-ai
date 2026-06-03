@@ -330,6 +330,21 @@ export const CreateThreadOutputSchema = z.object({
 })
 
 /**
+ * Schema for send-direct-message tool output
+ */
+export const SendDirectMessageOutputSchema = z.object({
+    type: z.literal('send_direct_message_result'),
+    success: z.boolean(),
+    conversationId: z.number(),
+    messageId: z.number(),
+    workspaceId: z.number(),
+    userIds: z.array(z.number()),
+    content: z.string(),
+    created: z.string(),
+    messageUrl: z.string(),
+})
+
+/**
  * Schema for update-thread tool output
  */
 export const UpdateThreadOutputSchema = z.object({
@@ -551,6 +566,7 @@ export const StructuredOutputSchema = z.union([
     UserInfoOutputSchema,
     BuildLinkOutputSchema,
     CreateThreadOutputSchema,
+    SendDirectMessageOutputSchema,
     UpdateThreadOutputSchema,
     UpdateCommentOutputSchema,
     UpdateMessageOutputSchema,
@@ -567,6 +583,7 @@ export const StructuredOutputSchema = z.union([
  * Type definitions for the structured outputs
  */
 export type CreateThreadOutput = z.infer<typeof CreateThreadOutputSchema>
+export type SendDirectMessageOutput = z.infer<typeof SendDirectMessageOutputSchema>
 export type UpdateThreadOutput = z.infer<typeof UpdateThreadOutputSchema>
 export type UpdateCommentOutput = z.infer<typeof UpdateCommentOutputSchema>
 export type UpdateMessageOutput = z.infer<typeof UpdateMessageOutputSchema>
