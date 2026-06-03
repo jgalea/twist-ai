@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`send-direct-message tool sending direct messages should open a 1:1 conversation and send a message to it 1`] = `
+"# Direct Message Sent
+
+**Conversation ID:** 33333
+**Message ID:** 98765
+**Participants:** 44444
+**Created:** 2024-01-01T00:00:00.000Z
+**URL:** https://twist.com/a/11111/msg/33333/m/98765
+
+## Content
+
+Hello there"
+`;

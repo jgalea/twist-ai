@@ -97,6 +97,13 @@ const TOOL_EXPECTATIONS: ToolExpectation[] = [
         idempotentHint: false,
     },
     {
+        name: ToolNames.SEND_DIRECT_MESSAGE,
+        title: 'Twist: Send Direct Message',
+        readOnlyHint: false,
+        destructiveHint: false,
+        idempotentHint: false,
+    },
+    {
         name: ToolNames.UPDATE_OBJECT,
         title: 'Twist: Update Object',
         readOnlyHint: false,

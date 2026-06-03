@@ -13,6 +13,7 @@ import { markDone } from './tools/mark-done.js'
 import { react } from './tools/react.js'
 import { reply } from './tools/reply.js'
 import { searchContent } from './tools/search-content.js'
+import { sendDirectMessage } from './tools/send-direct-message.js'
 import { updateObject } from './tools/update-object.js'
 import { userInfo } from './tools/user-info.js'
 
@@ -25,6 +26,7 @@ const tools = {
     searchContent,
     getMentions,
     createThread,
+    sendDirectMessage,
     updateObject,
     deleteObject,
     reply,
@@ -46,6 +48,7 @@ export {
     searchContent,
     getMentions,
     createThread,
+    sendDirectMessage,
     updateObject,
     deleteObject,
     reply,
