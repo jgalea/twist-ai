@@ -2,7 +2,6 @@ import { getFullTwistURL } from '@doist/twist-sdk'
 import { z } from 'zod'
 import { getToolOutput } from '../mcp-helpers.js'
 import type { TwistTool } from '../twist-tool.js'
-import { uploadAttachments } from '../utils/attachments.js'
 import { type CreateThreadOutput, CreateThreadOutputSchema } from '../utils/output-schemas.js'
 import { ToolNames } from '../utils/tool-names.js'
 
@@ -28,12 +27,6 @@ const ArgsSchema = {
         .describe(
             'Optional array of group IDs to notify. Use get-groups to discover group IDs before passing them here.',
         ),
-    attachments: z
-        .array(z.string())
-        .optional()
-        .describe(
-            'Optional local filesystem paths to upload and attach to the thread (e.g. images, video). Files are uploaded and posted as a follow-up comment on the thread immediately after creation.',
-        ),
 }
 
 const createThread = {
@@ -44,7 +37,7 @@ const createThread = {
     outputSchema: CreateThreadOutputSchema.shape,
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false },
     async execute(args, client) {
-        const { channelId, title, content, recipients, groups, displayInInbox, attachments } = args
+        const { channelId, title, content, recipients, groups, displayInInbox } = args
 
         const thread = await client.threads.createThread({
             channelId,
@@ -53,19 +46,6 @@ const createThread = {
             recipients,
             groups,
         })
-
-        const uploaded =
-            attachments && attachments.length > 0
-                ? await uploadAttachments(client, attachments)
-                : []
-
-        if (uploaded.length > 0) {
-            await client.comments.createComment({
-                threadId: thread.id,
-                content: '',
-                attachments: uploaded,
-            })
-        }
 
         const shouldDisplayInInbox =
             displayInInbox === true ||
@@ -101,11 +81,6 @@ const createThread = {
             ? '> Thread is in your Inbox (auto-unarchived after creation).'
             : '> Note: Threads you create do not appear in your own Inbox by default — only recipients see them there. Find the thread in the channel view or via its URL.'
 
-        const attachmentNames =
-            attachments && attachments.length > 0
-                ? attachments.map((path) => path.split('/').pop() ?? path)
-                : undefined
-
         const lines: string[] = [
             `# Thread Created`,
             '',
@@ -114,11 +89,13 @@ const createThread = {
             `**Channel ID:** ${thread.channelId}`,
             `**Created:** ${created.toISOString()}`,
             `**URL:** ${threadUrl}`,
+            '',
+            '## Content',
+            '',
+            thread.content,
+            '',
+            inboxNote,
         ]
-        if (attachmentNames) {
-            lines.push(`**Attachments:** ${attachmentNames.join(', ')}`)
-        }
-        lines.push('', '## Content', '', thread.content, '', inboxNote)
 
         const structuredContent: CreateThreadOutput = {
             type: 'create_thread_result',
@@ -133,9 +110,6 @@ const createThread = {
             threadUrl,
             ...(recipients ? { recipients } : {}),
             ...(groups ? { groups } : {}),
-            ...(attachmentNames
-                ? { attachmentCount: attachmentNames.length, attachmentNames }
-                : {}),
         }
 
         return getToolOutput({

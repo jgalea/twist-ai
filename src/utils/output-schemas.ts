@@ -327,8 +327,6 @@ export const CreateThreadOutputSchema = z.object({
     threadUrl: z.string(),
     recipients: z.array(z.number()).optional(),
     groups: z.array(z.number()).optional(),
-    attachmentCount: z.number().optional(),
-    attachmentNames: z.array(z.string()).optional(),
 })
 
 /**
@@ -346,8 +344,6 @@ export const CreateConversationOutputSchema = z.object({
     created: z.string(),
     conversationUrl: z.string(),
     messageUrl: z.string(),
-    attachmentCount: z.number().optional(),
-    attachmentNames: z.array(z.string()).optional(),
 })
 
 /**
@@ -489,8 +485,6 @@ export const ReplyOutputSchema = z.object({
     recipients: z.array(z.number()).optional(),
     notifyAudience: z.enum(NOTIFY_AUDIENCES).optional(),
     groups: z.array(z.number()).optional(),
-    attachmentCount: z.number().optional(),
-    attachmentNames: z.array(z.string()).optional(),
 })
 
 /**

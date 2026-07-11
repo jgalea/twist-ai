@@ -2,7 +2,6 @@ import { getFullTwistURL } from '@doist/twist-sdk'
 import { z } from 'zod'
 import { getToolOutput } from '../mcp-helpers.js'
 import type { TwistTool } from '../twist-tool.js'
-import { uploadAttachments } from '../utils/attachments.js'
 import {
     type CreateConversationOutput,
     CreateConversationOutputSchema,
@@ -18,28 +17,17 @@ const ArgsSchema = {
             'User IDs to include in the direct or group conversation (excluding yourself, who is added automatically). Use get-users to resolve names to IDs.',
         ),
     content: z.string().min(1).describe('The content of the first message to post.'),
-    attachments: z
-        .array(z.string())
-        .optional()
-        .describe(
-            'Optional local filesystem paths to upload and attach to the first message. Each file is uploaded to Twist before the message is sent.',
-        ),
 }
 
 const createConversation = {
     name: ToolNames.CREATE_CONVERSATION,
     description:
-        'Start a direct or group conversation with one or more users and post an initial message. Reuses the existing conversation if one already exists for the same set of users. Optionally attach local files to the first message.',
+        'Start a direct or group conversation with one or more users and post an initial message. Reuses the existing conversation if one already exists for the same set of users.',
     parameters: ArgsSchema,
     outputSchema: CreateConversationOutputSchema.shape,
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false },
     async execute(args, client) {
-        const { workspaceId, recipients, content, attachments } = args
-
-        const uploaded =
-            attachments && attachments.length > 0
-                ? await uploadAttachments(client, attachments)
-                : []
+        const { workspaceId, recipients, content } = args
 
         const conversation = await client.conversations.getOrCreateConversation({
             workspaceId,
@@ -49,7 +37,6 @@ const createConversation = {
         const message = await client.conversationMessages.createMessage({
             conversationId: conversation.id,
             content,
-            ...(uploaded.length > 0 ? { attachments: uploaded } : {}),
         })
 
         const conversationUrl = getFullTwistURL({
@@ -71,11 +58,6 @@ const createConversation = {
                 : postedValue
             : new Date()
 
-        const attachmentNames =
-            attachments && attachments.length > 0
-                ? attachments.map((path) => path.split('/').pop() ?? path)
-                : undefined
-
         const lines: string[] = [
             `# Conversation Started`,
             '',
@@ -84,11 +66,11 @@ const createConversation = {
             `**Participants:** ${conversation.userIds.join(', ')}`,
             `**Created:** ${created.toISOString()}`,
             `**URL:** ${conversationUrl}`,
+            '',
+            '## Message',
+            '',
+            content,
         ]
-        if (attachmentNames) {
-            lines.push(`**Attachments:** ${attachmentNames.join(', ')}`)
-        }
-        lines.push('', '## Message', '', content)
 
         const structuredContent: CreateConversationOutput = {
             type: 'create_conversation_result',
@@ -102,9 +84,6 @@ const createConversation = {
             created: created.toISOString(),
             conversationUrl,
             messageUrl,
-            ...(attachmentNames
-                ? { attachmentCount: attachmentNames.length, attachmentNames }
-                : {}),
         }
 
         return getToolOutput({
