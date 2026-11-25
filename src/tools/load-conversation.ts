@@ -8,6 +8,7 @@ import {
     normalizeAttachments,
 } from '../utils/attachments.js'
 import { LoadConversationOutputSchema } from '../utils/output-schemas.js'
+import { formatReactions, nonEmptyReactions, type Reactions } from '../utils/reactions.js'
 import { ToolNames } from '../utils/tool-names.js'
 
 const ArgsSchema = {
@@ -55,6 +56,7 @@ type LoadConversationStructured = {
         posted: string
         messageUrl: string
         attachments?: Attachment[]
+        reactions?: Reactions
     }>
     totalMessages: number
 }
@@ -125,7 +127,11 @@ const loadConversation = {
         lines.push(`## Messages (${messages.length})`)
         lines.push('')
 
-        for (const message of messages) {
+        const names: Record<number, string | undefined> = {}
+        for (const user of users) names[user.id] = user.name
+        const messageReactions = messages.map((m) => nonEmptyReactions(m.reactions))
+
+        for (const [index, message] of messages.entries()) {
             const messageDate = message.posted.toISOString()
             lines.push(`### Message ${message.id}`)
             lines.push(
@@ -137,6 +143,11 @@ const loadConversation = {
             if (attachmentsLine) {
                 lines.push('')
                 lines.push(attachmentsLine)
+            }
+            const reactionText = formatReactions(messageReactions[index], names)
+            if (reactionText) {
+                lines.push('')
+                lines.push(`**Reactions:** ${reactionText}`)
             }
             lines.push('')
         }
@@ -157,7 +168,7 @@ const loadConversation = {
                         conversationId: conversation.id,
                     }),
             },
-            messages: messages.map((m) => ({
+            messages: messages.map((m, index) => ({
                 id: m.id,
                 content: m.content,
                 creatorId: m.creator,
@@ -172,6 +183,7 @@ const loadConversation = {
                         messageId: m.id,
                     }),
                 attachments: normalizeAttachments(m.attachments),
+                reactions: messageReactions[index],
             })),
             totalMessages: conversation.messageCount ?? 0,
         }

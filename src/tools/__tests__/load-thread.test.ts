@@ -383,6 +383,69 @@ describe(`${LOAD_THREAD} tool`, () => {
         })
     })
 
+    describe('reactions', () => {
+        const user = (id: number, name: string) => ({
+            id,
+            name,
+            shortName: name,
+            email: `${name}@test.com`,
+            userType: 'USER' as const,
+            bot: false,
+            removed: false,
+            timezone: 'UTC',
+            version: 1,
+        })
+
+        it('surfaces thread and comment reactions with user names', async () => {
+            mockTwistApi.threads.getThread.mockResolvedValue(
+                createMockThread({
+                    creator: TEST_IDS.USER_1,
+                    reactions: { '❤️': [TEST_IDS.USER_2] },
+                }),
+            )
+            mockTwistApi.comments.getComments.mockResolvedValue([
+                createMockComment({
+                    creator: TEST_IDS.USER_1,
+                    reactions: { '👍': [TEST_IDS.USER_2] },
+                }),
+                createMockComment({ id: TEST_IDS.COMMENT_2, reactions: { '👍': [] } }),
+            ])
+            mockTwistApi.channels.getChannel.mockResolvedValue({
+                id: 67890,
+                name: 'Test Channel',
+                workspaceId: TEST_IDS.WORKSPACE_1,
+                archived: false,
+                public: true,
+                color: 0,
+                creator: TEST_IDS.USER_1,
+                version: 1,
+                created: new Date(),
+            })
+            mockTwistApi.workspaceUsers.getUserById.mockImplementation((async (args: {
+                userId: number
+            }) =>
+                args.userId === TEST_IDS.USER_2
+                    ? user(TEST_IDS.USER_2, 'Hendra')
+                    : user(TEST_IDS.USER_1, 'Jean')) as never)
+
+            const result = await loadThread.execute(
+                { threadId: TEST_IDS.THREAD_1, limit: 50, includeParticipants: false },
+                mockTwistApi,
+            )
+
+            const { structuredContent } = result
+            expect(structuredContent?.thread.reactions).toEqual({ '❤️': [TEST_IDS.USER_2] })
+            expect(structuredContent?.comments[0]?.reactions).toEqual({
+                '👍': [TEST_IDS.USER_2],
+            })
+            expect(structuredContent?.comments[1]?.reactions).toBeUndefined()
+            const text = extractTextContent(result)
+            expect(text).toContain('**Reactions:** 👍 Hendra')
+            expect(text).toContain('**Reactions:** ❤️ Hendra')
+            expect(text.match(/\*\*Reactions:\*\*/g)).toHaveLength(2)
+        })
+    })
+
     describe('error handling', () => {
         it('should propagate thread not found error', async () => {
             const apiError = new Error('Thread not found')

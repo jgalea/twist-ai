@@ -92,6 +92,7 @@ export const LoadThreadOutputSchema = z.object({
         participantNames: z.array(z.string()).optional(),
         threadUrl: z.string(),
         attachments: z.array(AttachmentSchema).optional(),
+        reactions: z.record(z.string(), z.array(z.number())).optional(),
     }),
     comments: z.array(
         z.object({
@@ -103,6 +104,7 @@ export const LoadThreadOutputSchema = z.object({
             posted: z.string(),
             commentUrl: z.string(),
             attachments: z.array(AttachmentSchema).optional(),
+            reactions: z.record(z.string(), z.array(z.number())).optional(),
         }),
     ),
     totalComments: z.number(),
@@ -132,6 +134,7 @@ export const LoadConversationOutputSchema = z.object({
             posted: z.string(),
             messageUrl: z.string(),
             attachments: z.array(AttachmentSchema).optional(),
+            reactions: z.record(z.string(), z.array(z.number())).optional(),
         }),
     ),
     totalMessages: z.number(),

@@ -167,6 +167,48 @@ describe(`${LOAD_CONVERSATION} tool`, () => {
             expect(textContent).not.toContain('## Participants')
         })
 
+        it('surfaces message reactions with user names', async () => {
+            const mockConversation = createMockConversation({
+                userIds: [TEST_IDS.USER_1, TEST_IDS.USER_2],
+            })
+            mockTwistApi.conversations.getConversation.mockResolvedValue(mockConversation)
+            mockTwistApi.conversationMessages.getMessages.mockResolvedValue([
+                createMockConversationMessage({
+                    id: TEST_IDS.MESSAGE_1,
+                    reactions: { '👍': [TEST_IDS.USER_2] },
+                }),
+                createMockConversationMessage({ id: TEST_IDS.MESSAGE_2 }),
+            ])
+            mockTwistApi.workspaceUsers.getUserById.mockImplementation((async (args: {
+                userId: number
+            }) => ({
+                id: args.userId,
+                name: args.userId === TEST_IDS.USER_2 ? 'Hendra' : 'Jean',
+                shortName: 'X',
+                email: 'x@test.com',
+                userType: 'USER' as const,
+                bot: false,
+                removed: false,
+                timezone: 'UTC',
+                version: 1,
+            })) as never)
+
+            const result = await loadConversation.execute(
+                {
+                    conversationId: TEST_IDS.CONVERSATION_1,
+                    limit: 50,
+                    includeParticipants: true,
+                },
+                mockTwistApi,
+            )
+
+            expect(result.structuredContent?.messages[0]?.reactions).toEqual({
+                '👍': [TEST_IDS.USER_2],
+            })
+            expect(result.structuredContent?.messages[1]?.reactions).toBeUndefined()
+            expect(extractTextContent(result)).toContain('**Reactions:** 👍 Hendra')
+        })
+
         it('should filter messages by date range', async () => {
             const mockConversation = createMockConversation()
             mockTwistApi.conversations.getConversation.mockResolvedValue(mockConversation)

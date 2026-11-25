@@ -8,6 +8,12 @@ import {
     normalizeAttachments,
 } from '../utils/attachments.js'
 import { LoadThreadOutputSchema } from '../utils/output-schemas.js'
+import {
+    formatReactions,
+    nonEmptyReactions,
+    reactionUserIds,
+    type Reactions,
+} from '../utils/reactions.js'
 import { ToolNames } from '../utils/tool-names.js'
 
 const ArgsSchema = {
@@ -54,6 +60,7 @@ type LoadThreadStructured = {
         participantNames?: string[]
         threadUrl: string
         attachments?: Attachment[]
+        reactions?: Reactions
     }
     comments: Array<{
         id: number
@@ -64,6 +71,7 @@ type LoadThreadStructured = {
         posted: string
         commentUrl: string
         attachments?: Attachment[]
+        reactions?: Reactions
     }>
     totalComments: number
 }
@@ -95,9 +103,17 @@ const loadThread = {
         const comments = commentsResponse.data
 
         // Collect all unique user IDs
+        const threadReactions = nonEmptyReactions(thread.reactions)
+        const commentReactions = comments.map((c) => nonEmptyReactions(c.reactions))
         const userIds = new Set<number>([thread.creator])
         for (const comment of comments) {
             userIds.add(comment.creator)
+        }
+        for (const id of [
+            ...reactionUserIds(threadReactions),
+            ...commentReactions.flatMap(reactionUserIds),
+        ]) {
+            userIds.add(id)
         }
         if (includeParticipants && thread.participants) {
             for (const participantId of thread.participants) {
@@ -154,11 +170,16 @@ const loadThread = {
             lines.push(threadAttachmentsLine)
             lines.push('')
         }
+        const threadReactionText = formatReactions(threadReactions, userLookup)
+        if (threadReactionText) {
+            lines.push(`**Reactions:** ${threadReactionText}`)
+            lines.push('')
+        }
 
         lines.push(`## Comments (${comments.length})`)
         lines.push('')
 
-        for (const comment of comments) {
+        for (const [index, comment] of comments.entries()) {
             const commentDate = comment.posted.toISOString()
             const commentCreatorName = userLookup[comment.creator]
             lines.push(`### Comment ${comment.id}`)
@@ -173,6 +194,11 @@ const loadThread = {
             if (commentAttachmentsLine) {
                 lines.push('')
                 lines.push(commentAttachmentsLine)
+            }
+            const commentReactionText = formatReactions(commentReactions[index], userLookup)
+            if (commentReactionText) {
+                lines.push('')
+                lines.push(`**Reactions:** ${commentReactionText}`)
             }
             lines.push('')
         }
@@ -216,8 +242,9 @@ const loadThread = {
                         threadId: thread.id,
                     }),
                 attachments: normalizeAttachments(thread.attachments),
+                reactions: threadReactions,
             },
-            comments: comments.map((c) => ({
+            comments: comments.map((c, index) => ({
                 id: c.id,
                 content: c.content,
                 creator: c.creator,
@@ -233,6 +260,7 @@ const loadThread = {
                         commentId: c.id,
                     }),
                 attachments: normalizeAttachments(c.attachments),
+                reactions: commentReactions[index],
             })),
             totalComments: thread.commentCount,
         }
